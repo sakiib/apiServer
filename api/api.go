@@ -16,12 +16,14 @@ var credential struct {
 	password string
 }
 
+var isAuthRequired bool
+
 func getUsers(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("getUsers")
 
 	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok); !authenticated {
+	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
@@ -37,7 +39,7 @@ func getUser(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("getUser")
 
 	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok); !authenticated {
+	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
@@ -61,7 +63,7 @@ func addUser(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("addUser")
 
 	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok); !authenticated {
+	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
@@ -83,7 +85,7 @@ func updateUser(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("updateUser")
 
 	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok); !authenticated {
+	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
@@ -112,7 +114,7 @@ func deleteUser(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("deleteUser")
 
 	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok); !authenticated {
+	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
@@ -129,10 +131,11 @@ func deleteUser(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(data.Users)
 }
 
-func HandleRoutes(username, password string) {
+func HandleRoutes(username, password, port string, authNeeded bool) {
 	fmt.Println("in HandleRoutes!")
 	credential.username = username
 	credential.password = password
+	isAuthRequired = authNeeded
 	fmt.Println("cred. username: ", credential.username, "cred. password: ", credential.password)
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/api/users", getUsers).Methods("GET")
@@ -140,5 +143,5 @@ func HandleRoutes(username, password string) {
 	router.HandleFunc("/api/user/{id}", addUser).Methods("POST")
 	router.HandleFunc("/api/user/{id}", updateUser).Methods("PUT")
 	router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
 }
