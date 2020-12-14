@@ -119,7 +119,6 @@ func deleteUser(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 	fmt.Println("Authentication successful!")
-	
 	params := mux.Vars(request)
 	for index, user := range data.Users {
 		if user.ID == params["id"] {
