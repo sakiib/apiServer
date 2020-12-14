@@ -2,8 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"github.com/spf13/cobra"
 )
+
+var username string
+var password string
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
@@ -17,7 +21,9 @@ var startCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(startCmd)
-
+	username = os.Getenv("username")
+	password = os.Getenv("password")
+	fmt.Println("username: ", username, " & ", "password: ", password)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
