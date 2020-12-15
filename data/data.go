@@ -1,6 +1,6 @@
 package data
 
-import "apiServer/model"
+import "github.com/sakiib/apiServer/model"
 
 var Users = []model.User{
 	model.User{ID: "1", FirstName: "sakib", LastName: "alamin"},

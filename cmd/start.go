@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"apiServer/api"
+	"github.com/sakiib/apiServer/api"
 	"fmt"
 	"os"
 	"github.com/spf13/cobra"

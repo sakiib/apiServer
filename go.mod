@@ -1,4 +1,4 @@
-module apiServer
+module github.com/sakiib/apiServer
 
 go 1.15
 

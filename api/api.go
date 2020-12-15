@@ -1,9 +1,9 @@
 package api
 
 import (
-	"apiServer/auth"
-	"apiServer/data"
-	"apiServer/model"
+	"github.com/sakiib/apiServer/auth"
+	"github.com/sakiib/apiServer/data"
+	"github.com/sakiib/apiServer/model"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"

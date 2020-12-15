@@ -1,6 +1,6 @@
 package main
 
-import "apiServer/cmd"
+import "github.com/sakiib/apiServer/cmd"
 
 func main() {
 	cmd.Execute()
