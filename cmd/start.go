@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/sakiib/apiServer/api"
 	"fmt"
-	"os"
+	"github.com/sakiib/apiServer/api"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var username string
@@ -17,7 +17,7 @@ var authNeeded bool
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples`,
+	Long:  `A longer description that spans multiple lines and likely contains examples`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("start called! start the server from this point..")
 		api.HandleRoutes(username, password, port, authNeeded)

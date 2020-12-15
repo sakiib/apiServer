@@ -15,7 +15,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "apiServer",
 	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains examples`,
+	Long:  `A longer description that spans multiple lines and likely contains examples`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {

@@ -1,12 +1,12 @@
 package api
 
 import (
-	"github.com/sakiib/apiServer/auth"
-	"github.com/sakiib/apiServer/data"
-	"github.com/sakiib/apiServer/model"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/sakiib/apiServer/auth"
+	"github.com/sakiib/apiServer/data"
+	"github.com/sakiib/apiServer/model"
 	"log"
 	"net/http"
 )
@@ -193,5 +193,5 @@ func HandleRoutes(username, password, port string, authNeeded bool) {
 	router.HandleFunc("/api/user/{id}", addUser).Methods("POST")
 	router.HandleFunc("/api/user/{id}", updateUser).Methods("PUT")
 	router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
-	log.Fatal(http.ListenAndServe(":" + port, router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
