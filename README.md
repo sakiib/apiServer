@@ -13,16 +13,6 @@ API Endpoints
 | `/api/user/{id}` | DeleteUser - Delete user with the `id` | DELETE | Success - StatusOK, Failure - StatusNoContent |
 
 ---
-User Data Model
-```
-type User struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-}
-```
-
----
 Installation
 * `go install github.com/sakiib/apiServer`
 
@@ -31,6 +21,16 @@ CLI Commands:
 * help with the start commands `apiServer start -h` or `apiServer start --help`
 * start the API server on the given port (def: 8080) `apiServer start --port=8080`
 * start the API server with no auth required flag (def: auth required): `apiServer start --auth=false`
+
+---
+User Data Model
+```
+type User struct {
+	ID        string `json:"id"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+}
+```
 
 --- 
 Set Environment variables for Basic Authentication
