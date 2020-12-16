@@ -1,6 +1,6 @@
 # API server
 
-### RESTful API using [go](https://github.com/golang), [cobra CLI](https://github.com/spf13/cobra) & [gorilla mux](https://github.com/gorilla/mux)
+### RESTful API using [go](https://github.com/golang), [cobra CLI](https://github.com/spf13/cobra), [gorilla mux](https://github.com/gorilla/mux), Basic Auth, [JWT Auth](https://github.com/dgrijalva/jwt-go)
 
 --- 
 API Endpoints
