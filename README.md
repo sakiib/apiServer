@@ -22,6 +22,11 @@ CLI Commands:
 * start the API server on the given port (def: 8080) `apiServer start --port=8080`
 * start the API server with no auth required flag (def: auth required): `apiServer start --auth=false`
 
+--- 
+Set Environment variables for Basic Authentication
+`export username=sakib`
+`export password=12345`
+
 ---
 User Data Model
 ```
@@ -31,11 +36,6 @@ type User struct {
 	LastName  string `json:"lastname"`
 }
 ```
-
---- 
-Set Environment variables for Basic Authentication
-`export username=sakib`
-`export password=12345`
 
 ---
 Authentication Method
