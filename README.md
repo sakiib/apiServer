@@ -6,11 +6,11 @@
 API Endpoints
 | Endpoint | Function | Method | StatusCode |
 | -------- | -------- | ------ | ---------- |
-| `/api/users` | GetUsers - Get all the users | GET | Success - StatusOK |
-| `/api/user/{id}` | GetUser - Get user with the `id` | GET | Success - StatusOK, Failure - StatusNoContent |
-| `/api/user/{id}` | AddUser - Add user with the `id` | POST | Success - StatusCreated, Failure - StatusConflict |
-| `/api/user/{id}` | UpdateUser - Update user with the `id` | PUT | Success - StatusCreated, Failure - StatusNoContent |
-| `/api/user/{id}` | DeleteUser - Delete user with the `id` | DELETE | Success - StatusOK, Failure - StatusNoContent |
+| `/api/users` | GetUsers | GET | Success - StatusOK |
+| `/api/user/{id}` | GetUser | GET | Success - StatusOK, Failure - StatusNoContent |
+| `/api/user/{id}` | AddUser | POST | Success - StatusCreated, Failure - StatusConflict |
+| `/api/user/{id}` | UpdateUser | PUT | Success - StatusCreated, Failure - StatusNoContent |
+| `/api/user/{id}` | DeleteUser | DELETE | Success - StatusOK, Failure - StatusNoContent |
 
 ---
 Installation
