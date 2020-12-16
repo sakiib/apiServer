@@ -52,9 +52,9 @@ Testing the API Endpoints
 ---
 Resources:
 * [sysdevbd learn GO](https://sysdevbd.com/go/)
-* [TutorialEdge Creating A Simple Web Server with Golang](https://tutorialedge.net/golang/creating-simple-web-server-with-golang/)
 * [Encoding & Decoding JSON](https://kevin.burke.dev/kevin/golang-json-http/)
 * [A Beginner’s Guide to HTTP and REST](https://code.tutsplus.com/tutorials/a-beginners-guide-to-http-and-rest--net-16340)
 * [HTTP Response Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+* [TutorialEdge Creating A Simple Web Server with Golang](https://tutorialedge.net/golang/creating-simple-web-server-with-golang/)
 
 
