@@ -42,13 +42,17 @@ func GetUsers(response http.ResponseWriter, request *http.Request) {
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(response).Encode(model.User{})
+		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 	fmt.Println("Authentication successful!")
 
 	response.WriteHeader(http.StatusOK)
-	json.NewEncoder(response).Encode(data.Users)
+	if err := json.NewEncoder(response).Encode(data.Users); err != nil {
+		log.Fatal(err)
+	}
 }
 
 //@route GET /api/user/id
@@ -61,7 +65,9 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(response).Encode(model.User{})
+		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 	fmt.Println("Authentication successful!")
@@ -70,7 +76,9 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 	for _, user := range data.Users {
 		if user.ID == ID {
 			response.WriteHeader(http.StatusOK)
-			json.NewEncoder(response).Encode(user)
+			if err := json.NewEncoder(response).Encode(user); err != nil {
+				log.Fatal(err)
+			}
 			return
 		}
 	}
@@ -88,7 +96,9 @@ func AddUser(response http.ResponseWriter, request *http.Request) {
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(response).Encode(model.User{})
+		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 	fmt.Println("Authentication successful!")
@@ -108,7 +118,9 @@ func AddUser(response http.ResponseWriter, request *http.Request) {
 
 	data.Users = append(data.Users, newUser)
 	response.WriteHeader(http.StatusCreated)
-	json.NewEncoder(response).Encode(data.Users)
+	if err := json.NewEncoder(response).Encode(data.Users); err != nil {
+		log.Fatal(err)
+	}
 }
 
 //@route PUT /api/user/id
@@ -121,7 +133,9 @@ func UpdateUser(response http.ResponseWriter, request *http.Request) {
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(response).Encode(model.User{})
+		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 	fmt.Println("Authentication successful!")
@@ -137,7 +151,9 @@ func UpdateUser(response http.ResponseWriter, request *http.Request) {
 			data.Users = append(data.Users[:index], data.Users[index+1:]...)
 			data.Users = append(data.Users, newUser)
 			response.WriteHeader(http.StatusCreated)
-			json.NewEncoder(response).Encode(data.Users)
+			if err := json.NewEncoder(response).Encode(data.Users); err != nil {
+				log.Fatal(err)
+			}
 			return
 		}
 	}
@@ -155,7 +171,9 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
 		response.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(response).Encode(model.User{})
+		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
 	fmt.Println("Authentication successful!")
@@ -165,7 +183,9 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 		if user.ID == ID {
 			data.Users = append(data.Users[:index], data.Users[index+1:]...)
 			response.WriteHeader(http.StatusOK)
-			json.NewEncoder(response).Encode(data.Users)
+			if err := json.NewEncoder(response).Encode(data.Users); err != nil {
+				log.Fatal(err)
+			}
 			return
 		}
 	}
