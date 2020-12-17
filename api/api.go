@@ -18,23 +18,35 @@ var credential struct {
 
 var isAuthRequired bool
 
+func parseID(request *http.Request) string {
+	params := mux.Vars(request)
+	ID := params["id"]
+	if len(ID) > 0 {
+		return ID
+	}
+
+	values := request.URL.Query()
+	if val, ok := values["id"]; ok && len(val) > 0 {
+		return val[0]
+	}
+	return ""
+}
+
 //@route GET /api/users
 //@desc Gets all the available users
 
-func getUsers(response http.ResponseWriter, request *http.Request) {
+func GetUsers(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("getUsers")
 
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
 		return
 	}
 	fmt.Println("Authentication successful!")
 
-	response.Write([]byte(`{"message":"Users List!"}`))
 	response.WriteHeader(http.StatusOK)
 	json.NewEncoder(response).Encode(data.Users)
 }
@@ -42,42 +54,39 @@ func getUsers(response http.ResponseWriter, request *http.Request) {
 //@route GET /api/user/id
 //@desc Gets a single user with the given id
 
-func getUser(response http.ResponseWriter, request *http.Request) {
+func GetUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("getUser")
 
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
 		return
 	}
 	fmt.Println("Authentication successful!")
 
-	params := mux.Vars(request)
+	ID := parseID(request)
 	for _, user := range data.Users {
-		if user.ID == params["id"] {
-			response.Write([]byte(`{"message":"User Found!"}`))
+		if user.ID == ID {
 			response.WriteHeader(http.StatusOK)
 			json.NewEncoder(response).Encode(user)
 			return
 		}
 	}
+
 	response.WriteHeader(http.StatusNoContent)
-	json.NewEncoder(response).Encode(model.User{})
 }
 
 //@route POST /api/user/id
 //@desc Create a new user with given info
 
-func addUser(response http.ResponseWriter, request *http.Request) {
+func AddUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("addUser")
 
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
 		return
@@ -89,30 +98,28 @@ func addUser(response http.ResponseWriter, request *http.Request) {
 		log.Fatal(err)
 	}
 
+	ID := parseID(request)
 	for _, user := range data.Users {
-		if newUser.ID == user.ID {
+		if ID == user.ID {
 			response.WriteHeader(http.StatusConflict)
-			response.Write([]byte(`{"message":"User with the given ID already exists!"}`))
 			return
 		}
 	}
 
-	response.Write([]byte(`{"message":"User Created!"}`))
-	response.WriteHeader(http.StatusCreated)
 	data.Users = append(data.Users, newUser)
+	response.WriteHeader(http.StatusCreated)
 	json.NewEncoder(response).Encode(data.Users)
 }
 
 //@route PUT /api/user/id
 //@desc Update a user details with given id
 
-func updateUser(response http.ResponseWriter, request *http.Request) {
+func UpdateUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("updateUser")
 
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
 		return
@@ -124,61 +131,46 @@ func updateUser(response http.ResponseWriter, request *http.Request) {
 		log.Fatal(err)
 	}
 
-	params := mux.Vars(request)
-	userUpdated := false
+	ID := parseID(request)
 	for index, user := range data.Users {
-		if user.ID == params["id"] {
+		if user.ID == ID {
 			data.Users = append(data.Users[:index], data.Users[index+1:]...)
 			data.Users = append(data.Users, newUser)
-			userUpdated = true
-			break
+			response.WriteHeader(http.StatusCreated)
+			json.NewEncoder(response).Encode(data.Users)
+			return
 		}
 	}
-	if !userUpdated {
-		response.WriteHeader(http.StatusNoContent)
-		response.Write([]byte(`{"message":"User with the given ID not Found!"}`))
-		return
-	}
 
-	response.Write([]byte(`{"message":"User Updated!"}`))
-	response.WriteHeader(http.StatusCreated)
-	json.NewEncoder(response).Encode(data.Users)
+	response.WriteHeader(http.StatusNoContent)
 }
 
 //@route DELETE /api/user/id
 //@desc Delete an user with the given ID
 
-func deleteUser(response http.ResponseWriter, request *http.Request) {
+func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("deleteUser")
 
 	username, password, ok := request.BasicAuth()
 	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.Write([]byte(`{"message":"Authentication Failed!"}`))
 		response.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(response).Encode(model.User{})
 		return
 	}
 	fmt.Println("Authentication successful!")
-	params := mux.Vars(request)
-	userDeleted := false
+
+	ID := parseID(request)
 	for index, user := range data.Users {
-		if user.ID == params["id"] {
+		if user.ID == ID {
 			data.Users = append(data.Users[:index], data.Users[index+1:]...)
-			userDeleted = true
-			break
+			response.WriteHeader(http.StatusOK)
+			json.NewEncoder(response).Encode(data.Users)
+			return
 		}
 	}
 
-	if !userDeleted {
-		response.WriteHeader(http.StatusNoContent)
-		response.Write([]byte(`{"message":"User with the given ID not Found!"}`))
-		return
-	}
-
-	response.Write([]byte(`{"message":"User Deleted!"}`))
-	response.WriteHeader(http.StatusOK)
-	json.NewEncoder(response).Encode(data.Users)
+	response.WriteHeader(http.StatusNoContent)
 }
 
 func HandleRoutes(username, password, port string, authNeeded bool) {
@@ -188,10 +180,10 @@ func HandleRoutes(username, password, port string, authNeeded bool) {
 	isAuthRequired = authNeeded
 	fmt.Println("cred. username: ", credential.username, "cred. password: ", credential.password)
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/api/users", getUsers).Methods("GET")
-	router.HandleFunc("/api/user/{id}", getUser).Methods("GET")
-	router.HandleFunc("/api/user/{id}", addUser).Methods("POST")
-	router.HandleFunc("/api/user/{id}", updateUser).Methods("PUT")
-	router.HandleFunc("/api/user/{id}", deleteUser).Methods("DELETE")
+	router.HandleFunc("/api/users", GetUsers).Methods("GET")
+	router.HandleFunc("/api/user/{id}", GetUser).Methods("GET")
+	router.HandleFunc("/api/user/{id}", AddUser).Methods("POST")
+	router.HandleFunc("/api/user/{id}", UpdateUser).Methods("PUT")
+	router.HandleFunc("/api/user/{id}", DeleteUser).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
