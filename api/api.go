@@ -11,13 +11,6 @@ import (
 	"net/http"
 )
 
-var credential struct {
-	username string
-	password string
-}
-
-var isAuthRequired bool
-
 func parseID(request *http.Request) string {
 	params := mux.Vars(request)
 	ID := params["id"]
@@ -38,15 +31,6 @@ func parseID(request *http.Request) string {
 func GetUsers(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("getUsers")
-
-	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.WriteHeader(http.StatusUnauthorized)
-		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
 	fmt.Println("Authentication successful!")
 
 	response.WriteHeader(http.StatusOK)
@@ -61,15 +45,6 @@ func GetUsers(response http.ResponseWriter, request *http.Request) {
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("getUser")
-
-	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.WriteHeader(http.StatusUnauthorized)
-		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
 	fmt.Println("Authentication successful!")
 
 	ID := parseID(request)
@@ -92,15 +67,6 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 func AddUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("addUser")
-
-	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.WriteHeader(http.StatusUnauthorized)
-		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
 	fmt.Println("Authentication successful!")
 
 	newUser := model.User{}
@@ -129,15 +95,6 @@ func AddUser(response http.ResponseWriter, request *http.Request) {
 func UpdateUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("updateUser")
-
-	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.WriteHeader(http.StatusUnauthorized)
-		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
 	fmt.Println("Authentication successful!")
 
 	newUser := model.User{}
@@ -167,15 +124,6 @@ func UpdateUser(response http.ResponseWriter, request *http.Request) {
 func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
 	fmt.Println("deleteUser")
-
-	username, password, ok := request.BasicAuth()
-	if authenticated := auth.CheckBasicAuthentication(credential.username, credential.password, username, password, ok, isAuthRequired); !authenticated {
-		response.WriteHeader(http.StatusUnauthorized)
-		if err := json.NewEncoder(response).Encode(model.User{}); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
 	fmt.Println("Authentication successful!")
 
 	ID := parseID(request)
@@ -193,17 +141,16 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	response.WriteHeader(http.StatusNoContent)
 }
 
-func HandleRoutes(username, password, port string, authNeeded bool) {
+func HandleRoutes(port string) {
 	fmt.Println("in HandleRoutes!")
-	credential.username = username
-	credential.password = password
-	isAuthRequired = authNeeded
-	fmt.Println("cred. username: ", credential.username, "cred. password: ", credential.password)
+
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/api/users", GetUsers).Methods("GET")
-	router.HandleFunc("/api/user/{id}", GetUser).Methods("GET")
-	router.HandleFunc("/api/user/{id}", AddUser).Methods("POST")
-	router.HandleFunc("/api/user/{id}", UpdateUser).Methods("PUT")
-	router.HandleFunc("/api/user/{id}", DeleteUser).Methods("DELETE")
+
+	router.HandleFunc("/api/users", auth.BasicAuthentication(GetUsers)).Methods("GET")
+	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(GetUser)).Methods("GET")
+	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(AddUser)).Methods("POST")
+	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(UpdateUser)).Methods("PUT")
+	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(DeleteUser)).Methods("DELETE")
+
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }

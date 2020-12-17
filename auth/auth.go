@@ -1,21 +1,26 @@
 package auth
 
-import "fmt"
+import (
+	"net/http"
+	"os"
+)
 
-func CheckBasicAuthentication(username, password, curUsername, curPassword string, ok, isAuthRequired bool) bool {
-	if !isAuthRequired {
-		fmt.Println("Auth check is not required, set by flag!")
-		return true
-	}
+func BasicAuthentication(next http.HandlerFunc) http.HandlerFunc {
+	return func(response http.ResponseWriter, request *http.Request) {
+		user := os.Getenv("username")
+		pass := os.Getenv("password")
 
-	if !ok {
-		fmt.Println("Authentication credentials, Username or Password not provided!")
-		return false
-	}
+		username, password, authOK := request.BasicAuth()
+		if authOK == false {
+			http.Error(response, "Not authorized", http.StatusUnauthorized)
+			return
+		}
 
-	if username != curUsername || password != curPassword {
-		fmt.Println("Wrong Username or Password!")
-		return false
+		if username != user || password != pass {
+			http.Error(response, "Not authorized", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(response, request)
 	}
-	return true
 }
