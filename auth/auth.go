@@ -1,14 +1,21 @@
 package auth
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"os"
+	"strings"
+)
+
+var (
+	user string
+	pass string
 )
 
 func BasicAuthentication(next http.HandlerFunc) http.HandlerFunc {
 	return func(response http.ResponseWriter, request *http.Request) {
-		user := os.Getenv("username")
-		pass := os.Getenv("password")
+		user = os.Getenv("username")
+		pass = os.Getenv("password")
 
 		username, password, authOK := request.BasicAuth()
 		if authOK == false {
@@ -20,6 +27,52 @@ func BasicAuthentication(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(response, "Not authorized", http.StatusUnauthorized)
 			return
 		}
+
+		next.ServeHTTP(response, request)
+	}
+}
+
+func GetToken() (string, error) {
+	signingKey := []byte("mysecretsigninkeysakibalaminappscode")
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"name": user,
+	})
+	tokenString, err := token.SignedString(signingKey)
+	return tokenString, err
+}
+
+func verifyToken(tokenString string) (jwt.Claims, error) {
+	signingKey := []byte("mysecretsigninkeysakibalaminappscode")
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return signingKey, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return token.Claims, err
+}
+
+func JWTAuthentication(next http.HandlerFunc) http.HandlerFunc {
+	return func(response http.ResponseWriter, request *http.Request) {
+
+		tokenString := request.Header.Get("Authorization")
+		if len(tokenString) == 0 {
+			response.WriteHeader(http.StatusUnauthorized)
+			response.Write([]byte("Missing Authorization Header"))
+			return
+		}
+
+		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
+		claims, err := verifyToken(tokenString)
+
+		if err != nil {
+			response.WriteHeader(http.StatusUnauthorized)
+			response.Write([]byte("Error verifying JWT token: " + err.Error()))
+			return
+		}
+
+		name := claims.(jwt.MapClaims)["name"].(string)
+		request.Header.Set("name", name)
 
 		next.ServeHTTP(response, request)
 	}

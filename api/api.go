@@ -143,8 +143,19 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 
 func LogIn(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("deleteUser")
+	fmt.Println("LogIn")
 	fmt.Println("Authentication successful!")
+	fmt.Println("successfully logged in!")
+
+	token, err := auth.GetToken()
+	if err != nil {
+		response.WriteHeader(http.StatusInternalServerError)
+		_, _ = response.Write([]byte("Error generating JWT token: " + err.Error()))
+	} else {
+		response.Header().Set("Authorization", "Bearer "+token)
+		response.WriteHeader(http.StatusOK)
+		_, _ = response.Write([]byte("Token: " + token))
+	}
 }
 
 func HandleRoutes(port string) {
@@ -153,11 +164,11 @@ func HandleRoutes(port string) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/api/login", auth.BasicAuthentication(LogIn)).Methods("POST")
-	router.HandleFunc("/api/users", auth.BasicAuthentication(GetUsers)).Methods("GET")
-	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(GetUser)).Methods("GET")
-	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(AddUser)).Methods("POST")
-	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(UpdateUser)).Methods("PUT")
-	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(DeleteUser)).Methods("DELETE")
+	router.HandleFunc("/api/users", auth.JWTAuthentication(GetUsers)).Methods("GET")
+	router.HandleFunc("/api/user/{id}", auth.JWTAuthentication(GetUser)).Methods("GET")
+	router.HandleFunc("/api/user/{id}", auth.JWTAuthentication(AddUser)).Methods("POST")
+	router.HandleFunc("/api/user/{id}", auth.JWTAuthentication(UpdateUser)).Methods("PUT")
+	router.HandleFunc("/api/user/{id}", auth.JWTAuthentication(DeleteUser)).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
