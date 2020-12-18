@@ -141,11 +141,18 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	response.WriteHeader(http.StatusNoContent)
 }
 
+func LogIn(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "application/json")
+	fmt.Println("deleteUser")
+	fmt.Println("Authentication successful!")
+}
+
 func HandleRoutes(port string) {
 	fmt.Println("in HandleRoutes!")
 
 	router := mux.NewRouter().StrictSlash(true)
 
+	router.HandleFunc("/api/login", auth.BasicAuthentication(LogIn)).Methods("POST")
 	router.HandleFunc("/api/users", auth.BasicAuthentication(GetUsers)).Methods("GET")
 	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(GetUser)).Methods("GET")
 	router.HandleFunc("/api/user/{id}", auth.BasicAuthentication(AddUser)).Methods("POST")
