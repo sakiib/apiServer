@@ -6,6 +6,7 @@
 API Endpoints
 | Endpoint | Function | Method | StatusCode |
 | -------- | -------- | ------ | ---------- |
+| `/api/login` | LogIn | POST | Success - StatusOK, Failure - StatusUnauthorized |
 | `/api/users` | GetUsers | GET | Success - StatusOK |
 | `/api/user/{id}` | GetUser | GET | Success - StatusOK, Failure - StatusNoContent |
 | `/api/user/{id}` | AddUser | POST | Success - StatusCreated, Failure - StatusConflict |
