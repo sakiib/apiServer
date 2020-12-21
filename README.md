@@ -34,21 +34,23 @@ Data Model
 package model
 
 type Movie struct {
-	ID string `json:"id"`
-	Title string `json:"title"`
-	Genre string `json:"genre"`
-	Rating int `json:"rating"`
+	ID     string `json:"id"`
+	Title  string `json:"title"`
+	Genre  string `json:"genre"`
+	Rating int    `json:"rating"`
 }
+
 ```
 ```
 package model
 
 type User struct {
-	ID        string `json:"id"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
+	ID             string `json:"id"`
+	FirstName      string `json:"firstname"`
+	LastName       string `json:"lastname"`
 	FavouriteMovie *Movie `json:"favouriteMovie"`
 }
+
 ```
 
 ---
