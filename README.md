@@ -4,14 +4,14 @@
 
 --- 
 API Endpoints
-| Endpoint | Function | Method | StatusCode |
-| -------- | -------- | ------ | ---------- |
-| `/api/login` | LogIn | POST | Success - StatusOK, Failure - StatusUnauthorized |
-| `/api/users` | GetUsers | GET | Success - StatusOK |
-| `/api/user/{id}` | GetUser | GET | Success - StatusOK, Failure - StatusNoContent |
-| `/api/user/{id}` | AddUser | POST | Success - StatusCreated, Failure - StatusConflict |
-| `/api/user/{id}` | UpdateUser | PUT | Success - StatusCreated, Failure - StatusNoContent |
-| `/api/user/{id}` | DeleteUser | DELETE | Success - StatusOK, Failure - StatusNoContent |
+| Endpoint | Function | Method | StatusCode | Auth |
+| -------- | -------- | ------ | ---------- | ---- |
+| `/api/login` | LogIn | POST | Success - StatusOK, Failure - StatusUnauthorized | Basic |
+| `/api/users` | GetUsers | GET | Success - StatusOK | JWT |
+| `/api/user/{id}` | GetUser | GET | Success - StatusOK, Failure - StatusNoContent | JWT |
+| `/api/user/{id}` | AddUser | POST | Success - StatusCreated, Failure - StatusConflict | JWT |
+| `/api/user/{id}` | UpdateUser | PUT | Success - StatusCreated, Failure - StatusNoContent | JWT |
+| `/api/user/{id}` | DeleteUser | DELETE | Success - StatusOK, Failure - StatusNoContent | JWT |
 
 ---
 Installation
