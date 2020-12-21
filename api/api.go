@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/sakiib/apiServer/auth"
 	"github.com/sakiib/apiServer/data"
@@ -30,12 +29,13 @@ func parseID(request *http.Request) string {
 
 func GetUsers(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("getUsers")
-	fmt.Println("Authentication successful!")
+	log.Println("getUsers")
+	log.Println("Authentication successful!")
 
 	response.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(response).Encode(data.Users); err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 }
 
@@ -44,15 +44,16 @@ func GetUsers(response http.ResponseWriter, request *http.Request) {
 
 func GetUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("getUser")
-	fmt.Println("Authentication successful!")
+	log.Println("getUser")
+	log.Println("Authentication successful!")
 
 	ID := parseID(request)
 	for _, user := range data.Users {
 		if user.ID == ID {
 			response.WriteHeader(http.StatusOK)
 			if err := json.NewEncoder(response).Encode(user); err != nil {
-				log.Fatal(err)
+				log.Println(err.Error())
+				return
 			}
 			return
 		}
@@ -66,12 +67,13 @@ func GetUser(response http.ResponseWriter, request *http.Request) {
 
 func AddUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("addUser")
-	fmt.Println("Authentication successful!")
+	log.Println("addUser")
+	log.Println("Authentication successful!")
 
 	newUser := model.User{}
 	if err := json.NewDecoder(request.Body).Decode(&newUser); err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	ID := parseID(request)
@@ -85,7 +87,8 @@ func AddUser(response http.ResponseWriter, request *http.Request) {
 	data.Users = append(data.Users, newUser)
 	response.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(response).Encode(data.Users); err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 }
 
@@ -94,12 +97,13 @@ func AddUser(response http.ResponseWriter, request *http.Request) {
 
 func UpdateUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("updateUser")
-	fmt.Println("Authentication successful!")
+	log.Println("updateUser")
+	log.Println("Authentication successful!")
 
 	newUser := model.User{}
 	if err := json.NewDecoder(request.Body).Decode(&newUser); err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	ID := parseID(request)
@@ -109,7 +113,8 @@ func UpdateUser(response http.ResponseWriter, request *http.Request) {
 			data.Users = append(data.Users, newUser)
 			response.WriteHeader(http.StatusCreated)
 			if err := json.NewEncoder(response).Encode(data.Users); err != nil {
-				log.Fatal(err)
+				log.Println(err.Error())
+				return
 			}
 			return
 		}
@@ -123,8 +128,8 @@ func UpdateUser(response http.ResponseWriter, request *http.Request) {
 
 func DeleteUser(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("deleteUser")
-	fmt.Println("Authentication successful!")
+	log.Println("deleteUser")
+	log.Println("Authentication successful!")
 
 	ID := parseID(request)
 	for index, user := range data.Users {
@@ -132,7 +137,8 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 			data.Users = append(data.Users[:index], data.Users[index+1:]...)
 			response.WriteHeader(http.StatusOK)
 			if err := json.NewEncoder(response).Encode(data.Users); err != nil {
-				log.Fatal(err)
+				log.Println(err.Error())
+				return
 			}
 			return
 		}
@@ -143,9 +149,9 @@ func DeleteUser(response http.ResponseWriter, request *http.Request) {
 
 func LogIn(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "application/json")
-	fmt.Println("LogIn")
-	fmt.Println("Authentication successful!")
-	fmt.Println("successfully logged in!")
+	log.Println("LogIn")
+	log.Println("Authentication successful!")
+	log.Println("successfully logged in!")
 
 	token, err := auth.GetToken()
 	if err != nil {
@@ -159,7 +165,7 @@ func LogIn(response http.ResponseWriter, request *http.Request) {
 }
 
 func HandleRoutes(port string) {
-	fmt.Println("in HandleRoutes!")
+	log.Println("in HandleRoutes!")
 
 	router := mux.NewRouter().StrictSlash(true)
 

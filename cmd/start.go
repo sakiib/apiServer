@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/sakiib/apiServer/api"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 //var Username string
@@ -18,7 +18,7 @@ var startCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  `A longer description that spans multiple lines and likely contains examples`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("start called! start the server from this point..")
+		log.Println("start called! start the server from this point..")
 		api.HandleRoutes(port)
 	},
 }
