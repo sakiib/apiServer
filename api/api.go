@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sakiib/apiServer/auth"
@@ -8,6 +9,10 @@ import (
 	"github.com/sakiib/apiServer/model"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func parseID(request *http.Request) string {
@@ -176,5 +181,33 @@ func HandleRoutes(port string) {
 	router.HandleFunc("/api/user/{id}", auth.JWTAuthentication(UpdateUser)).Methods("PUT")
 	router.HandleFunc("/api/user/{id}", auth.JWTAuthentication(DeleteUser)).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	//log.Fatal(http.ListenAndServe(":"+port, router))
+	// gracefully shutdown the server
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: router,
+	}
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Printf("listen: %s\n", err)
+		}
+	}()
+	log.Print("Server Started")
+
+	<-done
+	log.Print("Server Stopped")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer func() {
+		cancel()
+	}()
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Printf("Server Shutdown Failed:%+v", err)
+	}
+	log.Print("Server Exited Properly")
 }
