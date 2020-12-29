@@ -1,6 +1,8 @@
 # API server
 
-### RESTful API using [go](https://github.com/golang), [cobra CLI](https://github.com/spf13/cobra), [gorilla mux](https://github.com/gorilla/mux), Basic Auth, [JWT Auth](https://github.com/dgrijalva/jwt-go) [![Go Report Card](https://goreportcard.com/badge/github.com/sakiib/apiServer)](https://goreportcard.com/report/github.com/sakiib/apiServer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sakiib/apiServer)](https://goreportcard.com/report/github.com/sakiib/apiServer)
+
+### RESTful API using [go](https://github.com/golang), [cobra CLI](https://github.com/spf13/cobra), [gorilla mux](https://github.com/gorilla/mux), Basic Auth, [JWT Auth](https://github.com/dgrijalva/jwt-go)
 
 --- 
 API Endpoints
