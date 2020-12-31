@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -14,6 +15,11 @@ var (
 
 func BasicAuthentication(next http.HandlerFunc) http.HandlerFunc {
 	return func(response http.ResponseWriter, request *http.Request) {
+		auth := os.Getenv("auth")
+		if auth == "false" {
+			next.ServeHTTP(response, request)
+			return
+		}
 		user = os.Getenv("username")
 		pass = os.Getenv("password")
 
@@ -54,6 +60,14 @@ func verifyToken(tokenString string) (jwt.Claims, error) {
 
 func JWTAuthentication(next http.HandlerFunc) http.HandlerFunc {
 	return func(response http.ResponseWriter, request *http.Request) {
+		log.Println("in jwt auth func")
+		auth := os.Getenv("auth")
+		log.Println("auth: ", auth)
+
+		if auth == "false" {
+			next.ServeHTTP(response, request)
+			return
+		}
 
 		tokenString := request.Header.Get("Authorization")
 		if len(tokenString) == 0 {
