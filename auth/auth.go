@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
@@ -42,6 +43,7 @@ func GetToken() (string, error) {
 	signingKey := []byte("mysecretsigninkeysakibalaminappscode")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"name": user,
+		"exp": time.Now().Add(600 * time.Second).Unix(),
 	})
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
