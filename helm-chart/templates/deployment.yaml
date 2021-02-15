@@ -1,21 +1,29 @@
+{{ $root := . }}
+
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
-  name: apiserver
+  name: {{ $root.Release.Name }}-deployment
   labels:
-    app: apiserver
+    {{- include "labels" . | nindent 4 }}
+
 spec:
-  replicas: 3
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: apiserver
+      {{- include "labels" . | nindent 6 }}
   template:
     metadata:
+      name: {{ $root.Release.Name }}-pod
       labels:
-        app: apiserver
+        {{- include "labels" . | nindent 8 }}
     spec:
       containers:
-        - name: apiserver
-          image: sakibalamin/apiserver:1.0.1
+      {{- with .Values.image }}
+      -   name: {{ $root.Release.Name }}-container
+          image: {{ .registry }}/{{ .repository }}:{{ .tag }}
+          imagePullPolicy: {{ .pullPolicy }}
           ports:
-            - containerPort: 8080
+            -   containerPort: {{ .port }}
+      {{- end }}
