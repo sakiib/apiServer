@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apiserver
+  labels:
+    app: apiserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: apiserver
+  template:
+    metadata:
+      labels:
+        app: apiserver
+    spec:
+      containers:
+        - name: apiserver
+          image: sakibalamin/apiserver:1.0.1
+          ports:
+            - containerPort: 8080
