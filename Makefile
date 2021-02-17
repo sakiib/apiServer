@@ -24,12 +24,6 @@ push: build-image
 	docker push ${REGISTRY}/${APP_NAME}:${TAG}
 
 
-install:
-	helm install ${RELEASE_NAME} chart
-
-uninstall:
-	helm uninstall ${RELEASE_NAME}
-
 clean:
 	@echo Cleaning up...
 	rm -rf ${APP_NAME}
