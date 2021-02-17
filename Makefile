@@ -1,4 +1,4 @@
-.PHONY: all build-binary build-image push clean install uninstall
+.PHONY: all build-binary build-image push clean
 
 all: build-binary build-image push
 
